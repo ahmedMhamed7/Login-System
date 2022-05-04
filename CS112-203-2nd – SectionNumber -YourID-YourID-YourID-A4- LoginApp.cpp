@@ -9,6 +9,8 @@ using namespace std;
 int string_length, key = 3;
 char matrix[100][100], encrypted[100], decrypted[100];
 
+// declaring functions
+
 void initializing_matrix() {
     for (int i = 0; i < key; i++) {
         for (int j = 0; j < string_length; j++) {
@@ -52,7 +54,7 @@ void encryption() {
     }
 }
 
-int encryptedPassword() {
+void encryptedPassword() {
     string password;
     cin.ignore();
     getline(cin, password);
@@ -63,8 +65,6 @@ int encryptedPassword() {
     preparing_matrix_encryption (password);
     encryption();
 }
-
-// declaring functions
 
 //string EnterPassword(){
 //    string numAsString = "";
@@ -77,7 +77,8 @@ int encryptedPassword() {
 //    return numAsString;
 //}
 
-void Register() { char c;
+void Register() {
+    char c;
     string password, passwordCheck;
     cout << "Please make sure your password must:\n1. Contain upper and lowercase letters\n2. Contain symbols (ex: _, -, /)\n 3. Contain Numbers\n4. Contain no spaces\n5. Have at least 8 characters. ";
     cout << "\nPassword: ";
@@ -159,3 +160,4 @@ int main() {
     }
     return 0;
 }
+
