@@ -42,7 +42,6 @@ void preparing_matrix_encryption(string text) {
 }
 
 void encryption() {
-    encrypted[string_length];
     int fill = 0;
     for (int i = 0; i < key; i++) {
         for (int j = 0; j < string_length; j++) {
@@ -65,6 +64,24 @@ void encryptedPassword() {
     preparing_matrix_encryption (password);
     encryption();
 }
+
+bool has_any_digits(const string& password) {
+    return any_of(password.begin(), password.end(), ::isdigit);
+}
+
+bool check_uppercase(const string& password) {
+    return any_of(password.begin(), password.end(), ::isupper);
+}
+
+bool check_lowercase(const string& password) {
+    return any_of(password.begin(), password.end(), ::islower);
+}
+
+bool contains_symbols(const string& password) {
+    return (password.find('-') != -1 || password.find('_') != -1 || password.find('/') != -1);
+}
+bool contains_spaces(const string& password) {
+    return password.find(' ') != -1;
 
 //string EnterPassword(){
 //    string numAsString = "";
