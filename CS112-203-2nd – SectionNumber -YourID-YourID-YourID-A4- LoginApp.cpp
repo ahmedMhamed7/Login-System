@@ -7,10 +7,9 @@
 using namespace std;
 
 int string_length, key = 3;
-char matrix[100][100], encrypted[100], decrypted[100];
+char matrix[100][100], encrypted[100];
 
 // declaring functions
-
 void initializing_matrix() {
     for (int i = 0; i < key; i++) {
         for (int j = 0; j < string_length; j++) {
@@ -53,7 +52,7 @@ void encryption() {
     }
 }
 
-void encryptedPassword() {
+char encryptedPassword() {
     string password;
     cin.ignore();
     getline(cin, password);
@@ -63,6 +62,7 @@ void encryptedPassword() {
     initializing_matrix();
     preparing_matrix_encryption (password);
     encryption();
+    return encrypted;
 }
 
 bool has_any_digits(const string& password) {
@@ -138,7 +138,6 @@ void Register() {
     }
     encryptedPassword();
     cout << "You password has been safely saved";
-
 }
 
 void Login() {
