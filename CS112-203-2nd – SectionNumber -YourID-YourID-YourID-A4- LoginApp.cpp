@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <list>
 #include <regex>
+#include <fstream>
 
 
 using namespace std;
@@ -123,7 +124,7 @@ void encryption() {
     }
 }
 
-char encryptedPassword() {
+void encryptedPassword() {
     string password;
     cin.ignore();
     getline(cin, password);
@@ -133,7 +134,6 @@ char encryptedPassword() {
     initializing_matrix();
     preparing_matrix_encryption (password);
     encryption();
-    return encrypted;
 }
 
 bool has_any_digits(const string& password) {
@@ -153,20 +153,30 @@ bool contains_symbols(const string& password) {
 }
 bool contains_spaces(const string& password) {
     return password.find(' ') != -1;
+}
 
-//string EnterPassword(){
-//    string numAsString = "";
-//    char ch = getch();
-//    while (ch != '\r') {
-//        cout << '*';
-//        numAsString += ch;
-//        ch = getch();
-//    }
-//    return numAsString;
-//}
+string EnterPassword(){
+    string numAsString = "";
+    cin.ignore(256, '\n');
+    char ch = getch();
+    while (ch != '\n') {
+        if(ch != (char) 127){
+            cout << '*';
+            numAsString += ch;
+        }
+        else{
+            if(numAsString.length() != 0){
+                cout << "\b \b";
+                numAsString.resize(numAsString.length()-1);
+            }
+        }
+        ch = getch();
+    }
+    return numAsString;
+}
 
 void Register() {
-string line;
+    string line;
     myFile.open("Database.txt", ios::in);
     while (!myFile.eof()) {
         myFile >> line;
@@ -186,52 +196,52 @@ string line;
     verifyMobile();
     // 5. Ensure that the name follows proper format
     verifyName();
-        char c;
-        string password, passwordCheck;
-        cout
-                << "Please make sure your password must:\n1. Contain upper and lowercase letters\n2. Contain symbols (ex: _, -, /)\n 3. Contain Numbers\n4. Contain no spaces\n5. Have at least 8 characters. ";
-        cout << "\nPassword: ";
+    char c;
+    string password, passwordCheck;
+    cout
+            << "Please make sure your password must:\n1. Contain upper and lowercase letters\n2. Contain symbols (ex: _, -, /)\n 3. Contain Numbers\n4. Contain no spaces\n5. Have at least 8 characters. ";
+    cout << "\nPassword: ";
+    password = EnterPassword();
+    while (!has_any_digits(password)) {
+        cout << "Password must contain digits\nPlease re-enter your password: ";
         cin >> password;
-        while (!has_any_digits(password)) {
-            cout << "Password must contain digits\nPlease re-enter your password: ";
-            cin >> password;
-            has_any_digits(password);
-        }
-        while (!check_uppercase(password) || !check_lowercase(password)) {
-            cout << "Password must contain both lower and uppercase letters\nPlease re-enter your password: ";
-            cin >> password;
-            check_lowercase(password);
-            check_uppercase(password);
-        }
-        while (password.length() < 8) {
-            cout << "Password must contain at least 8 characters\nPlease re-enter your password";
-            cin >> password;
-        }
-        while (!contains_symbols(password)) {
-            cout << "Password must contain symbols\nPlease re-enter your password: ";
-            cin >> password;
-            contains_symbols(password);
-        }
-        while (contains_spaces(password)) {
-            cout << "Password must not contain any spaces\nPlease re-enter your password: ";
-            cin >> password;
-            contains_spaces(password);
-        }
-        while (!contains_symbols(password)) {
-            cout << "Password must contain symbols\nPlease re-enter your password: ";
-            cin >> password;
-            contains_symbols(password);
-        }
-        cout << "Please re-enter your password to make sure it's correct: ";
-        cin >> passwordCheck;
-        while (password != passwordCheck) {
-            cout << "The password doesn't match the password you previously entered\nPlease re-enter your password: ";
-            cin >> passwordCheck;
-        }
-        encryptedPassword();
-        cout << "You password has been safely saved";
+        has_any_digits(password);
     }
+    while (!check_uppercase(password) || !check_lowercase(password)) {
+        cout << "Password must contain both lower and uppercase letters\nPlease re-enter your password: ";
+        cin >> password;
+        check_lowercase(password);
+        check_uppercase(password);
+    }
+    while (password.length() < 8) {
+        cout << "Password must contain at least 8 characters\nPlease re-enter your password";
+        cin >> password;
+    }
+    while (!contains_symbols(password)) {
+        cout << "Password must contain symbols\nPlease re-enter your password: ";
+        cin >> password;
+        contains_symbols(password);
+    }
+    while (contains_spaces(password)) {
+        cout << "Password must not contain any spaces\nPlease re-enter your password: ";
+        cin >> password;
+        contains_spaces(password);
+    }
+    while (!contains_symbols(password)) {
+        cout << "Password must contain symbols\nPlease re-enter your password: ";
+        cin >> password;
+        contains_symbols(password);
+    }
+    cout << "Please re-enter your password to make sure it's correct: ";
+    cin >> passwordCheck;
+    while (password != passwordCheck) {
+        cout << "The password doesn't match the password you previously entered\nPlease re-enter your password: ";
+        cin >> passwordCheck;
+    }
+    encryptedPassword();
+    cout << "You password has been safely saved";
 }
+
 
 void Login() {
 
@@ -269,4 +279,3 @@ int main() {
     }
     return 0;
 }
-
