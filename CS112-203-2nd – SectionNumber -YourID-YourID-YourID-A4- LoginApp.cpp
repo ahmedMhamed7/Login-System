@@ -82,9 +82,6 @@ int main(){
         }
 }
 
-
-
-
 void Register(){
     /*myFile.open("users_file.txt", ios::in);
     while (!myFile.eof()) {
@@ -113,7 +110,7 @@ void Register(){
             users_file.open("users_file.txt",ios:: app);
             users_file << username << endl;
             users_file << email << endl;
-            users_file << encryptedPassword << endl;
+            users_file << encrypted << endl;
             users_file << mobile << endl;
             users_file.close();
         }
@@ -268,11 +265,7 @@ string verify_password(){
     encryptedPassword();
     cout << "Your password has been safely saved\n";
     return password;
-
 }
-
-
-
 
 void initializing_matrix() {
     for (int i = 0; i < key; i++) {
@@ -344,7 +337,6 @@ bool contains_symbols(const string& password) {
 bool contains_spaces(const string& password) {
     return password.find(' ') != -1;
 }
-
 
 void Login(){
     string ID;
