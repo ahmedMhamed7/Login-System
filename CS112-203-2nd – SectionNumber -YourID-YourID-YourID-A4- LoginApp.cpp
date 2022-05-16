@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cstring>
 #include <map>
 #include <algorithm>
 #include <cctype>
 #include <conio.h>
 #include <list>
 #include <regex>
-#include <unordered_map>
 
 using namespace std;
 
@@ -23,21 +23,21 @@ map <string, user_profile> users;
 fstream users_file;
 
 int string_length, key = 3;
-string username, email, mobile, password;
+string username, email, mobile, password, new_password, ID;
 string user_choice;
-char matrix[100][100], encrypted[100];
+char matrix[100][100], encrypted[100], pass[100];;
 
 //functions declaration
 void Register();
 void load_existing_users(map<string, user_profile> &my_map);
 bool is_username_existed(map <string, user_profile> &my_map, string username);
 bool is_email_existed(map <string, user_profile> &my_map, string email);
-bool is_password_existed(map <string, user_profile> &my_map);
-string verify_password();
+bool is_password_existed(map <string, user_profile> my_map);
+void verify_password();
 void initializing_matrix();
 void preparing_matrix_encryption(string text);
-void encryption();
-string encryptedPassword();
+string encryption(char word[1000]);
+void encryptedPassword(string password);
 bool has_any_digits(const string& password);
 bool check_uppercase(const string& password);
 bool check_lowercase(const string& password);
@@ -47,7 +47,6 @@ void verifyName();
 void verifyMobile();
 void verifyEmail();
 void Login();
-//void LoginToChange();
 void change_password();
 
 int main(){
@@ -82,14 +81,8 @@ int main(){
         }
 }
 
+
 void Register(){
-    /*myFile.open("users_file.txt", ios::in);
-    while (!myFile.eof()) {
-        myFile >> line;
-        if (line.substr(line.length() - 4, line.length()) == ".com") {
-            userProfile.insert(pair < string, list < string >> (line, userDetails));
-        }
-    }*/
     cout << "Please enter The username :";
     cin >> username;
     verifyName();
@@ -98,8 +91,7 @@ void Register(){
         Register();
     }
     else{
-        cout << "Please enter your email :";
-        cin >> email;
+        verifyEmail();
         if(is_email_existed(users, email)){
             cout << "Sorry this email is already used Please choose another one\n\n";
             Register();
@@ -110,12 +102,13 @@ void Register(){
             users_file.open("users_file.txt",ios:: app);
             users_file << username << endl;
             users_file << email << endl;
-            users_file << encrypted << endl;
+            users_file << encryption(encrypted) << endl;
             users_file << mobile << endl;
             users_file.close();
         }
     }
 }
+
 
 void load_existing_users(map<string, user_profile> &my_map){
     users_file.open("users_file.txt", ios::in);
@@ -142,6 +135,7 @@ bool is_username_existed(map <string, user_profile> &my_map, string username){
     }
     return x;
 }
+
 void verifyName(){
     string namePattern = "^[a-zA-Z_]+$";
     regex nameRule(namePattern);
@@ -153,8 +147,9 @@ void verifyName(){
     }
 }
 
+
 void verifyMobile(){
-    cout << "Please enter your mobile number: " << endl;
+    cout << "Please enter your mobile number: " ;
     cin >> mobile;
     string regexPattern = "01[0-9]*";
     regex regexRule(regexPattern);
@@ -179,40 +174,42 @@ bool is_email_existed(map <string, user_profile> &my_map, string email){
     }
     return x;
 }
-bool is_password_existed(map <string, user_profile> &my_map){
-    string pass;
+
+bool is_password_existed(map <string, user_profile> my_map){
+
     static int count = 0;
     cout << "Please enter your password :";
     cin >> pass;
     bool x = false;
-    for (auto const& element : my_map)
-    {
-        if(element.second.user_password == pass){
+    encryptedPassword(pass);
+    for (auto const& element : my_map){
+        if(element.second.user_password == encryption(pass) && element.first == ID){
             x = true;
-            cout << "Successful login , Welcome to out login app!\n";
+            cout << "Successful login , Welcome to our login app!\n";
             if(user_choice == "1"){
                 main();
             }
         }
-        else {
-            if (count == 2){
-                cout << "Your are denied access to the system \n\n";
-                main();
-            }
-            count++;
-            cout << "Sorry! Your password is not correct Please try again\n";
-            is_password_existed(users);
+    }
+    if(user_choice == "3"){
+        new_password = pass;
+    }
+    if(x == 0) {
+        if (count == 2){
+            cout << "Your are denied access to the system \n\n";
+            count =0;
+            main();
         }
-
-
+        count++;
+        cout << "Sorry! Your password is not correct Please try again\n";
+        is_password_existed(users);
     }
     return x;
 }
 void verifyEmail(){
-    string email;
     string regexPattern = "\\w+\\.?\\w+@\\w+\\.com";
     regex regexRule(regexPattern);
-    cout << "Please enter your email: " << endl;
+    cout << "Please enter your email: " ;
     cin >> email;
     bool isValid = regex_match(email, regexRule);
     if(!isValid){
@@ -221,7 +218,7 @@ void verifyEmail(){
     }
 }
 
-string verify_password(){
+void verify_password(){
     string passwordCheck;
     cout << "Please make sure your password must:\n1. Contain upper and lowercase letters\n2. Contain symbols (ex: _, -, /)\n 3. Contain Numbers\n4. Contain no spaces\n5. Have at least 8 characters. ";
     cout << "\nPassword: ";
@@ -262,10 +259,10 @@ string verify_password(){
         cout << "The password doesn't match the password you previously entered\nPlease re-enter your password: ";
         cin >> passwordCheck;
     }
-    encryptedPassword();
+    encryptedPassword(password);
     cout << "Your password has been safely saved\n";
-    return password;
 }
+
 
 void initializing_matrix() {
     for (int i = 0; i < key; i++) {
@@ -297,26 +294,27 @@ void preparing_matrix_encryption(string text) {
     }
 }
 
-void encryption() {
+string encryption(char word[100]) {
     int fill = 0;
     for (int i = 0; i < key; i++) {
         for (int j = 0; j < string_length; j++) {
             if (matrix[i][j] != '*') {
-                encrypted[fill] = matrix[i][j];
+                word[fill] = matrix[i][j];
                 fill += 1;
             }
         }
     }
+    string word2(word);
+    return word2;
 }
 
-string encryptedPassword() {
+void encryptedPassword(string password) {
     auto removing_spaces = remove(password.begin(), password.end(), ' ');
     password.erase(removing_spaces, password.end());
     string_length = password.length();
     initializing_matrix();
     preparing_matrix_encryption (password);
-    encryption();
-    return password;
+    encryption(encrypted);
 }
 
 bool has_any_digits(const string& password) {
@@ -338,20 +336,19 @@ bool contains_spaces(const string& password) {
     return password.find(' ') != -1;
 }
 
+
 void Login(){
-    string ID;
     static int count = 0;
     cout << "Please enter your username :";
     cin >> ID;
     if(is_username_existed(users, ID)){
         is_password_existed(users);
+        if(user_choice=="3"){
+            return;
+        }
+        main();
     }
     else{
-        if (count == 2){
-            cout << "Your are denied access to the system \n\n";
-            main();
-        }
-        count++;
         cout << "Sorry! Your username is not correct Please try again\n";
         Login();
     }
@@ -363,19 +360,16 @@ void change_password(){
     string word;
     cout << "Please login at first\n";
     Login();
-    cout << "Please enter your new password \n\n";
+    cout << "Please enter your new password \n";
     verify_password();
     users_file.open("users_file.txt",ios:: in);
-    ofstream fileout("new_users_file.txt");
+    ofstream new_file("new_users_file.txt");
     while(users_file >> word)
     {
-        if(word == password){
-            word = "done";
-            //found = true;
+        if(word == encryption(password.data())){
+            new_file << encryption(new_password.data()) << endl;
+            continue;
         }
-        word += "\n";
-        fileout << word;
-        //if(found) break;
+        new_file << word << endl;
     }
-
 }
